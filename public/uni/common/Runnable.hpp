@@ -1,0 +1,28 @@
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+/// @file uni/common/Runnable.hpp
+/// @brief Declaration Runnable class.
+/// @author Sergey Polyakov <white.irbys@gmail.com>
+/// @date 08.2020
+/// @note Thanks to the POCO library
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+#pragma once
+
+#include "uni/common/Defines.hpp"
+
+namespace uni
+{
+namespace common
+{
+class UNI_API Runnable
+{
+    // Special function section
+public:
+    virtual ~Runnable( ) = default;
+
+public:
+    virtual void run( ) = 0;
+};
+
+}  // namespace common
+}  // namespace uni
