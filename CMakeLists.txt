@@ -1,12 +1,12 @@
 project( uni-common )
 
 set( HEADERS
-    "public/uni/common/Constants.hpp"
-    "public/uni/common/Defines.hpp"
-    "public/uni/common/Queue.hpp"
-    "public/uni/common/Runnable.hpp"
-    "public/uni/common/Thread.hpp"
-    "public/uni/common/ThreadPool.hpp"
+    "include/uni/common/Constants.hpp"
+    "include/uni/common/Defines.hpp"
+    "include/uni/common/Queue.hpp"
+    "include/uni/common/Runnable.hpp"
+    "include/uni/common/Thread.hpp"
+    "include/uni/common/ThreadPool.hpp"
 )
 
 set( SOURCES
@@ -23,7 +23,7 @@ add_library( ${PROJECT_NAME} SHARED
 
 target_include_directories( ${PROJECT_NAME}
     PUBLIC
-        ${SOURCE_DIR}/common/public
+        ${SOURCE_DIR}/common/include
     PRIVATE
         ${SOURCE_DIR}/common/src
 )
@@ -33,14 +33,13 @@ target_link_libraries( ${PROJECT_NAME}
         ${CMAKE_THREAD_LIBS_INIT}
 )
 
-set_target_properties( ${PROJECT_NAME}
-    PROPERTIES
-    PUBLIC_HEADER "${HEADERS}"
+install( TARGETS ${PROJECT_NAME}
+    ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}
+    LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
+    RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
 )
 
-install( TARGETS ${PROJECT_NAME}
-    ARCHIVE DESTINATION usr/lib
-    LIBRARY DESTINATION usr/lib
-    PUBLIC_HEADER DESTINATION usr/include
-    RUNTIME DESTINATION usr/bin
+# The trailing slash is important
+install( DIRECTORY ${CMAKE_INSTALL_INCLUDEDIR}/
+         DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}
 )
