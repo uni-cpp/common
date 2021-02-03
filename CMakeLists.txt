@@ -44,3 +44,5 @@ install( TARGETS ${PROJECT_NAME}
 install( DIRECTORY ${CMAKE_INSTALL_INCLUDEDIR}/
          DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}
 )
+
+add_subdirectory( test )
