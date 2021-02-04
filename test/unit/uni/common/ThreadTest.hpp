@@ -1,26 +1,43 @@
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+/// @file test/uni/common/ThreadTest.hpp
+/// @brief Declaration thread test class.
+/// @author Sergey Polyakov <white.irbys@gmail.com>
+/// @date 02.2021
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+#pragma once
+
+#include <uni/common/Thread.hpp>
+
 #include <gmock/gmock.h>
 #include <gtest/gtest.h>
 
-class ThreadTest : public testing::Test
+namespace test
+{
+namespace uni
+{
+namespace common
+{
+class ThreadTest
+    : public ::uni::common::Thread
+    , public testing::Test
 {
     using Base = testing::Test;
 
 public:
-    ThreadTest( )
-        : testing::Test( )
-    {
-    }
+    ThreadTest( );
+    ~ThreadTest( ) override = default;
 
-protected:
-    void
-    SetUp( ) override
-    {
-        ASSERT_NO_FATAL_FAILURE( Base::SetUp( ) );
-    }
+    // Test
+private:
+    void SetUp( ) override;
+    void TearDown( ) override;
 
-    void
-    TearDown( ) override
-    {
-        ASSERT_NO_FATAL_FAILURE( Base::TearDown( ) );
-    }
+    // Thread
+private:
+    void run( ) override;
 };
+
+}  // namespace common
+}  // namespace uni
+}  // namespace test
