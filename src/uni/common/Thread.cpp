@@ -25,7 +25,7 @@ Thread::~Thread( )
     stop( );
 }
 
-Thread::Thread( std::string name, RepeatType repeat_type, uint64_t timeout_ms )
+Thread::Thread( std::string name, Repeat repeat_type, uint64_t timeout_ms )
     : m_name{ std::move( name ) }
     , m_repeat_type{ repeat_type }
     , m_timeout_ms{ timeout_ms }
@@ -89,6 +89,8 @@ Thread::stop( )
         join( );
     }
 
+    m_runnable.reset( );
+
     return true;
 }
 
@@ -121,19 +123,26 @@ Thread::set_current_thread_name( const std::string& name )
 }
 
 void
+Thread::run( )
+{
+    // Fix rare pure virtual call
+    // Might appears when object of derived class is under destruction before run( ) from async thread is invoked
+}
+
+void
 Thread::prepare_and_run( )
 {
     set_current_thread_name( m_name );
 
     switch( m_repeat_type )
     {
-        case( RepeatType::ONCE ):
+        case( Repeat::ONCE ):
         {
             run( );
         }
         break;
 
-        case( RepeatType::LOOP ):
+        case( Repeat::LOOP ):
         {
             auto start_time{ std::chrono::system_clock::now( ) };
             auto end_time{ start_time };
@@ -157,7 +166,7 @@ Thread::prepare_and_run( )
                 {
                     const auto time_to_next_run = std::chrono::milliseconds( m_timeout_ms ) - time_elapsed;
                     std::unique_lock< std::mutex > lock( m_mutex );
-                    if( m_cv.wait_for( lock, time_to_next_run, [ this ] { return m_is_closing; } ) )
+                    if( m_cv.wait_for( lock, time_to_next_run, [this] { return m_is_closing; } ) )
                     {
                         break;
                     };
