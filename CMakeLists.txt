@@ -46,3 +46,12 @@ install( DIRECTORY ${CMAKE_INSTALL_INCLUDEDIR}/
 )
 
 add_subdirectory( test )
+
+if( CODE_COVERAGE )
+    generate_coverage( ${PROJECT_NAME} ${PROJECT_NAME}-unittests)
+
+    install( DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/${COVERAGE_OUTPUT_DIR_NAME}/
+             DESTINATION ${CMAKE_INSTALL_DOCDIR}/uni/common
+    )
+endif( )
+

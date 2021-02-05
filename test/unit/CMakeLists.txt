@@ -1,4 +1,4 @@
-project( uni-common-unit-tests )
+project( uni-common-unittests )
 
 set( HEADERS
     ""
@@ -33,6 +33,14 @@ target_link_libraries( ${PROJECT_NAME}
         gtest-main
         gmock
 )
+
+if( CODE_COVERAGE )
+    add_custom_target( ${PROJECT_NAME}_run ALL
+                        ${PROJECT_NAME}
+                        DEPENDS ${PROJECT_NAME}
+                        VERBATIM
+                        USES_TERMINAL )
+endif( )
 
 install( TARGETS ${PROJECT_NAME}
     ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}
