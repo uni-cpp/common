@@ -5,6 +5,7 @@
 /// @date 23.08.2020
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
+#include <uni/common/Log.hpp>
 #include <uni/common/Thread.hpp>
 
 #if defined( __WIN64__ )
@@ -37,7 +38,7 @@ Thread::start( )
 {
     if( m_runnable )
     {
-        // Thread already started
+        LOG_DEBUG_MSG( "Thread already started" );
         return false;
     }
 

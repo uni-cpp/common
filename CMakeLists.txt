@@ -4,6 +4,7 @@ set( HEADERS
     "include/uni/common/BaseListener.hpp"
     "include/uni/common/Constants.hpp"
     "include/uni/common/Defines.hpp"
+    "include/uni/common/Log.hpp"
     "include/uni/common/Queue.hpp"
     "include/uni/common/Runnable.hpp"
     "include/uni/common/Thread.hpp"
