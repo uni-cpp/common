@@ -15,10 +15,10 @@ namespace uni
 namespace common
 {
 template < typename LISTENER >
-class BaseListener
+class BaseNotifier
 {
 public:
-    virtual ~BaseListener( )
+    virtual ~BaseNotifier( )
     {
         std::lock_guard< std::mutex > lock{ _mutex };
         _listeners.clear( );
