@@ -1,7 +1,7 @@
 project( uni-common )
 
 set( HEADERS
-    "include/uni/common/BaseListener.hpp"
+    "include/uni/common/BaseNotifier.hpp"
     "include/uni/common/Constants.hpp"
     "include/uni/common/Defines.hpp"
     "include/uni/common/Log.hpp"
@@ -12,6 +12,7 @@ set( HEADERS
 )
 
 set( SOURCES
+    "src/uni/common/BaseNotifier.cpp"
     "src/uni/common/Thread.cpp"
     "src/uni/common/ThreadPool.cpp"
 )

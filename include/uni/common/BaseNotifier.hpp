@@ -1,8 +1,8 @@
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-/// @file uni/common/BaseListener.hpp
+/// @file uni/common/BaseNotifier.hpp
 /// @brief Base listener's functionality.
 /// @author Sergey Polyakov <white.irbys@gmail.com>
-/// @date 01.2021
+/// @date 2021
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 #pragma once
@@ -18,28 +18,11 @@ template < typename LISTENER >
 class BaseNotifier
 {
 public:
-    virtual ~BaseNotifier( )
-    {
-        std::lock_guard< std::mutex > lock{ _mutex };
-        _listeners.clear( );
-    };
+    virtual ~BaseNotifier( );
 
-    void
-    add_listener( LISTENER* listener )
-    {
-        if( listener )
-        {
-            std::lock_guard< std::mutex > lock{ _mutex };
-            _listeners.emplace( listener );
-        }
-    };
+    void add_listener( LISTENER* listener );
 
-    void
-    remove_listener( LISTENER* listener )
-    {
-        std::lock_guard< std::mutex > lock{ _mutex };
-        _listeners.erase( listener );
-    };
+    void remove_listener( LISTENER* listener );
 
     template < typename CALLBACK, typename... ARGS >
     void
