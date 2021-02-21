@@ -50,7 +50,8 @@ private:
     inline void
     append( std::ostream& ostream, const T& value )
     {
-        ostream << value;
+        // Probably std::endl would be more useful in case of unexpected crash
+        ostream << value << "\n";
     }
 
 private:
