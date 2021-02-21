@@ -2,7 +2,7 @@
 /// @file uni/common/Log.hpp
 /// @brief Logging enums, structs and interface.
 /// @author Sergey Polyakov <white.irbys@gmail.com>
-/// @date 02.2021
+/// @date 2021
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 #pragma once
@@ -58,12 +58,7 @@ private:
     std::ostream& m_ostream{ std::cout };
 };
 
-Log&
-logger( )
-{
-    static Log log;
-    return log;
-}
+Log& logger( );
 
 }  // namespace common
 }  // namespace uni

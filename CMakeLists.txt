@@ -13,6 +13,7 @@ set( HEADERS
 
 set( SOURCES
     "src/uni/common/BaseNotifier.cpp"
+    "src/uni/common/Log.cpp"
     "src/uni/common/Thread.cpp"
     "src/uni/common/ThreadPool.cpp"
 )
