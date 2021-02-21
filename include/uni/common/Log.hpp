@@ -8,6 +8,7 @@
 #pragma once
 
 #include <iostream>
+#include <mutex>
 
 namespace uni
 {
@@ -31,6 +32,7 @@ public:
     void
     log_msg( Level level, const char* func, const Args&... args )
     {
+        std::lock_guard< std::mutex > lock( m_mutex );
         m_ostream << "Level: " << static_cast< std::underlying_type< Level >::type >( level ) << ", " << func << ", ";
         append( m_ostream, args... );
     }
@@ -52,6 +54,7 @@ private:
     }
 
 private:
+    std::mutex m_mutex{};
     std::ostream& m_ostream{ std::cout };
 };
 
