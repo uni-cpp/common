@@ -29,13 +29,22 @@ public:
         COUNT  //< Maximum value, used for range check
     };
 
+    void
+    set_max_log_level( Level level )
+    {
+        m_max_level = level;
+    }
+
     template < typename... Args >
     void
     log_msg( Level level, const char* func, const Args&... args )
     {
-        std::lock_guard< std::mutex > lock( m_mutex );
-        m_ostream << "Level: " << static_cast< std::underlying_type< Level >::type >( level ) << ", " << func << ", ";
-        append( m_ostream, args... );
+        if( level <= m_max_level )
+        {
+            std::lock_guard< std::mutex > lock( m_mutex );
+            m_ostream << "Level: " << static_cast< std::underlying_type< Level >::type >( level ) << ", " << func << ", ";
+            append( m_ostream, args... );
+        }
     }
 
 private:
@@ -55,9 +64,9 @@ private:
         ostream << value << "\n";
     }
 
-private:
     std::mutex m_mutex{};
     std::ostream& m_ostream{ std::cout };
+    Level m_max_level{ Level::DEBUG };
 };
 
 Log& logger( );
