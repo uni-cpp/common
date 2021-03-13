@@ -25,6 +25,7 @@ public:
         INFO,
         DEBUG,
         TRACE,
+
         COUNT  //< Maximum value, used for range check
     };
 
