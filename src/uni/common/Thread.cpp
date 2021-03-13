@@ -23,6 +23,8 @@ namespace common
 {
 Thread::~Thread( )
 {
+    LOG_TRACE_MSG( "" );
+
     stop( );
 }
 
@@ -31,15 +33,18 @@ Thread::Thread( std::string name, Repeat repeat_type, uint64_t timeout_ms )
     , m_repeat_type{ repeat_type }
     , m_timeout_ms{ timeout_ms }
 {
+    LOG_TRACE_MSG( "" );
 }
 
-bool
+ErrorCode
 Thread::start( )
 {
+    LOG_TRACE_MSG( "" );
+
     if( m_runnable )
     {
         LOG_DEBUG_MSG( "Thread already started" );
-        return false;
+        return ErrorCode::INTERNAL;
     }
 
     on_start( );
@@ -50,27 +55,40 @@ Thread::start( )
     }
 
     m_runnable = std::make_unique< std::thread >( [this] { prepare_and_run( ); } );
-    return ( nullptr != m_runnable );
+    if( !m_runnable )
+    {
+        LOG_ERROR_MSG( "Thread was not created." );
+        return ErrorCode::INTERNAL;
+    }
+
+    return ErrorCode::NONE;
 }
 
 bool
 Thread::is_running( ) const
 {
+    LOG_TRACE_MSG( "" );
+
     return m_runnable && m_runnable->joinable( );
 }
 
 bool
 Thread::is_on_thread( ) const
 {
+    LOG_TRACE_MSG( "" );
+
     return ( m_runnable && ( std::this_thread::get_id( ) == m_runnable->get_id( ) ) );
 }
 
-bool
+ErrorCode
 Thread::stop( )
 {
+    LOG_TRACE_MSG( "" );
+
     if( !is_running( ) )
     {
-        return false;
+        LOG_DEBUG_MSG( "Thread is not running" );
+        return ErrorCode::INTERNAL;
     }
 
     on_stop( );
@@ -83,6 +101,7 @@ Thread::stop( )
 
     if( is_on_thread( ) )
     {
+        LOG_WARNING_MSG( "Thread was detached. Try to use stop() not from async thread." );
         m_runnable->detach( );
     }
     else
@@ -92,12 +111,14 @@ Thread::stop( )
 
     m_runnable.reset( );
 
-    return true;
+    return ErrorCode::NONE;
 }
 
 void
 Thread::join( )
 {
+    LOG_TRACE_MSG( "" );
+
     if( m_runnable && m_runnable->joinable( ) )
     {
         m_runnable->join( );
@@ -111,7 +132,7 @@ Thread::get_name( ) const
 }
 
 void
-Thread::set_current_thread_name( const std::string& name )
+set_current_thread_name( const std::string& name )
 {
 #if defined( __APPLE__ )
     pthread_setname_np( name.c_str( ) );
@@ -126,6 +147,8 @@ Thread::set_current_thread_name( const std::string& name )
 void
 Thread::run( )
 {
+    LOG_TRACE_MSG( "" );
+
     // Fix rare pure virtual call
     // Might appears when object of derived class is under destruction before run( ) from async thread is invoked
 }
@@ -133,6 +156,8 @@ Thread::run( )
 void
 Thread::prepare_and_run( )
 {
+    LOG_TRACE_MSG( "" );
+
     set_current_thread_name( m_name );
 
     switch( m_repeat_type )

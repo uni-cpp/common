@@ -7,6 +7,8 @@
 
 #include "ThreadTest.hpp"
 
+#include <uni/common/ErrorCode.hpp>
+
 namespace
 {
 const std::string NAME_TEST_THREAD{ "TEST_MainThread" };
@@ -54,46 +56,46 @@ TEST_F( ThreadTest, WithoutStart )
 
 TEST_F( ThreadTest, StartWithoutStop )
 {
-    ASSERT_TRUE( start( ) );
+    ASSERT_EQ( ::uni::common::ErrorCode::NONE, start( ) );
     ASSERT_TRUE( is_running( ) );
 }
 
 TEST_F( ThreadTest, StartStop )
 {
-    ASSERT_TRUE( start( ) );
+    ASSERT_EQ( ::uni::common::ErrorCode::NONE, start( ) );
     ASSERT_TRUE( is_running( ) );
-    ASSERT_TRUE( stop( ) );
+    ASSERT_EQ( ::uni::common::ErrorCode::NONE, stop( ) );
     ASSERT_FALSE( is_running( ) );
 }
 
 TEST_F( ThreadTest, MultipleStartStop )
 {
-    ASSERT_TRUE( start( ) );
+    ASSERT_EQ( ::uni::common::ErrorCode::NONE, start( ) );
     ASSERT_TRUE( is_running( ) );
-    ASSERT_TRUE( stop( ) );
+    ASSERT_EQ( ::uni::common::ErrorCode::NONE, stop( ) );
     ASSERT_FALSE( is_running( ) );
 
-    ASSERT_TRUE( start( ) );
+    ASSERT_EQ( ::uni::common::ErrorCode::NONE, start( ) );
     ASSERT_TRUE( is_running( ) );
-    ASSERT_TRUE( stop( ) );
+    ASSERT_EQ( ::uni::common::ErrorCode::NONE, stop( ) );
     ASSERT_FALSE( is_running( ) );
 }
 
 TEST_F( ThreadTest, StopWithoutStart )
 {
-    ASSERT_FALSE( stop( ) );
+    ASSERT_NE( ::uni::common::ErrorCode::NONE, stop( ) );
 
-    ASSERT_TRUE( start( ) );
-    ASSERT_TRUE( stop( ) );
+    ASSERT_EQ( ::uni::common::ErrorCode::NONE, start( ) );
+    ASSERT_EQ( ::uni::common::ErrorCode::NONE, stop( ) );
 
-    ASSERT_FALSE( stop( ) );
+    ASSERT_NE( ::uni::common::ErrorCode::NONE, stop( ) );
 }
 
 TEST_F( ThreadTest, DoubleStart )
 {
-    ASSERT_TRUE( start( ) );
-    ASSERT_FALSE( start( ) );
-    ASSERT_TRUE( stop( ) );
+    ASSERT_EQ( ::uni::common::ErrorCode::NONE, start( ) );
+    ASSERT_NE( ::uni::common::ErrorCode::NONE, start( ) );
+    ASSERT_EQ( ::uni::common::ErrorCode::NONE, stop( ) );
 }
 
 TEST_F( ThreadTest, GetName )

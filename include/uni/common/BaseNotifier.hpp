@@ -20,24 +20,24 @@ class BaseNotifier
 public:
     virtual ~BaseNotifier( );
 
+public:
     void add_listener( LISTENER* listener );
-
     void remove_listener( LISTENER* listener );
 
     template < typename CALLBACK, typename... ARGS >
     void
     notify_listeners( CALLBACK callback, ARGS&&... args ) const
     {
-        std::lock_guard< std::mutex > lock{ _mutex };
-        for( const auto& listener : _listeners )
+        std::lock_guard< std::mutex > lock{ m__mutex };
+        for( const auto& listener : m_listeners )
         {
-            ( listener->*callback )( args... );
+            ( listener->*callback )( std::forward( args... ) );
         }
     }
 
 private:
-    mutable std::mutex _mutex;
-    std::set< LISTENER* > _listeners;
+    mutable std::mutex m__mutex;
+    std::set< LISTENER* > m_listeners;
 };
 
 }  // namespace common

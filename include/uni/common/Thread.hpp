@@ -10,6 +10,7 @@
 
 #include "uni/common/Constants.hpp"
 #include "uni/common/Defines.hpp"
+#include "uni/common/ErrorCode.hpp"
 #include "uni/common/Runnable.hpp"
 
 #include <chrono>
@@ -31,19 +32,17 @@ public:
     };
 
 public:
-    Thread( ) = delete;
     Thread( std::string name, Repeat repeat_type = Repeat::ONCE, uint64_t timeout_ms = DEFAULT_TIMEOUT );
 
     ~Thread( ) override;
 
 public:
-    bool start( );
+    ErrorCode start( );
     bool is_running( ) const;
     bool is_on_thread( ) const;
-    bool stop( );
+    ErrorCode stop( );
 
     std::string get_name( ) const;
-    static void set_current_thread_name( const std::string& name );
 
     // Should be re-implemented
 protected:
@@ -69,6 +68,8 @@ private:
 
     std::unique_ptr< std::thread > m_runnable{ nullptr };
 };
+
+void set_current_thread_name( const std::string& name );
 
 }  // namespace common
 }  // namespace uni

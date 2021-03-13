@@ -14,6 +14,7 @@ namespace common
 enum class ErrorCode
 {
     NONE,
+    INTERNAL,
     TIMEOUT,
 
     UNDEFINED
