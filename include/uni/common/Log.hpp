@@ -9,6 +9,7 @@
 
 #include <iostream>
 #include <mutex>
+#include <thread>
 
 namespace uni
 {
@@ -42,7 +43,9 @@ public:
         if( level <= m_max_level )
         {
             std::lock_guard< std::mutex > lock( m_mutex );
-            m_ostream << "Level: " << static_cast< std::underlying_type< Level >::type >( level ) << ", " << func << ", ";
+            m_ostream << "Thread:" << std::this_thread::get_id( ) << ", ";
+            m_ostream << "Level:" << static_cast< std::underlying_type< Level >::type >( level ) << ", ";
+            m_ostream << func << ", ";
             append( m_ostream, args... );
         }
     }
@@ -74,9 +77,24 @@ Log& logger( );
 }  // namespace common
 }  // namespace uni
 
-#define LOG_FATAL_MSG( ... )   uni::common::logger( ).log_msg( uni::common::Log::Level::FATAL, __func__, __VA_ARGS__ )
-#define LOG_ERROR_MSG( ... )   uni::common::logger( ).log_msg( uni::common::Log::Level::ERROR, __func__, __VA_ARGS__ )
-#define LOG_WARNING_MSG( ... ) uni::common::logger( ).log_msg( uni::common::Log::Level::WARNING, __func__, __VA_ARGS__ )
-#define LOG_INFO_MSG( ... )    uni::common::logger( ).log_msg( uni::common::Log::Level::INFO, __func__, __VA_ARGS__ )
-#define LOG_DEBUG_MSG( ... )   uni::common::logger( ).log_msg( uni::common::Log::Level::DEBUG, __func__, __VA_ARGS__ )
-#define LOG_TRACE_MSG( ... )   uni::common::logger( ).log_msg( uni::common::Log::Level::TRACE, __func__, __VA_ARGS__ )
+#define LOG_MSG( ... ) uni::common::logger( ).log_msg( __VA_ARGS__ )
+
+#define LOG_FATAL_MSG( ... )   LOG_MSG( uni::common::Log::Level::FATAL, __PRETTY_FUNCTION__, __VA_ARGS__ )
+#define LOG_ERROR_MSG( ... )   LOG_MSG( uni::common::Log::Level::ERROR, __PRETTY_FUNCTION__, __VA_ARGS__ )
+#define LOG_WARNING_MSG( ... ) LOG_MSG( uni::common::Log::Level::WARNING, __PRETTY_FUNCTION__, __VA_ARGS__ )
+#define LOG_INFO_MSG( ... )    LOG_MSG( uni::common::Log::Level::INFO, __PRETTY_FUNCTION__, __VA_ARGS__ )
+#define LOG_DEBUG_MSG( ... )   LOG_MSG( uni::common::Log::Level::DEBUG, __PRETTY_FUNCTION__, __VA_ARGS__ )
+#define LOG_TRACE_MSG( ... )   LOG_MSG( uni::common::Log::Level::TRACE, __PRETTY_FUNCTION__, __VA_ARGS__ )
+
+#define REQUIRED_RETVAL( condition, msg, return_value ) \
+    if( !( condition ) )                                \
+    {                                                   \
+        LOG_ERROR_MSG( msg );                           \
+        return ( return_value );                        \
+    }
+
+#define REQUIRED_VOID( condition, msg ) REQUIRED_RETVAL( ( condition ), ( msg ), void( ) )
+
+// https://stackoverflow.com/questions/11761703/overloading-macro-on-number-of-arguments/11763277#11763277
+#define GET_MACRO( _1, _2, _3, MACRO, ... ) MACRO
+#define REQUIRED( ... )                     GET_MACRO( __VA_ARGS__, REQUIRED_RETVAL, REQUIRED_VOID )( __VA_ARGS__ )
