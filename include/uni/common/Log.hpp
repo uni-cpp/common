@@ -43,9 +43,14 @@ public:
         if( level <= m_max_level )
         {
             std::lock_guard< std::mutex > lock( m_mutex );
-            m_ostream << "Thread:" << std::this_thread::get_id( ) << ", ";
-            m_ostream << "Level:" << static_cast< std::underlying_type< Level >::type >( level ) << ", ";
-            m_ostream << func << ", ";
+            m_ostream << "\""
+                      << "Thread:" << std::this_thread::get_id( ) << "\""
+                      << " ";
+            m_ostream << "\""
+                      << "Level:" << static_cast< std::underlying_type< Level >::type >( level ) << "\""
+                      << " ";
+            m_ostream << "\"" << func << "\""
+                      << " ";
             append( m_ostream, args... );
         }
     }
