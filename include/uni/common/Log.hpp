@@ -84,12 +84,12 @@ Log& logger( );
 
 #define LOG_MSG( ... ) uni::common::logger( ).log_msg( __VA_ARGS__ )
 
-#define LOG_FATAL_MSG( ... )   LOG_MSG( uni::common::Log::Level::FATAL, __PRETTY_FUNCTION__, __VA_ARGS__ )
-#define LOG_ERROR_MSG( ... )   LOG_MSG( uni::common::Log::Level::ERROR, __PRETTY_FUNCTION__, __VA_ARGS__ )
-#define LOG_WARNING_MSG( ... ) LOG_MSG( uni::common::Log::Level::WARNING, __PRETTY_FUNCTION__, __VA_ARGS__ )
-#define LOG_INFO_MSG( ... )    LOG_MSG( uni::common::Log::Level::INFO, __PRETTY_FUNCTION__, __VA_ARGS__ )
-#define LOG_DEBUG_MSG( ... )   LOG_MSG( uni::common::Log::Level::DEBUG, __PRETTY_FUNCTION__, __VA_ARGS__ )
-#define LOG_TRACE_MSG( ... )   LOG_MSG( uni::common::Log::Level::TRACE, __PRETTY_FUNCTION__, __VA_ARGS__ )
+#define LOG_FATAL_MSG( ... )   LOG_MSG( uni::common::Log::Level::FATAL, static_cast< const char* >( __PRETTY_FUNCTION__ ), __VA_ARGS__ )
+#define LOG_ERROR_MSG( ... )   LOG_MSG( uni::common::Log::Level::ERROR, static_cast< const char* >( __PRETTY_FUNCTION__ ), __VA_ARGS__ )
+#define LOG_WARNING_MSG( ... ) LOG_MSG( uni::common::Log::Level::WARNING, static_cast< const char* >( __PRETTY_FUNCTION__ ), __VA_ARGS__ )
+#define LOG_INFO_MSG( ... )    LOG_MSG( uni::common::Log::Level::INFO, static_cast< const char* >( __PRETTY_FUNCTION__ ), __VA_ARGS__ )
+#define LOG_DEBUG_MSG( ... )   LOG_MSG( uni::common::Log::Level::DEBUG, static_cast< const char* >( __PRETTY_FUNCTION__ ), __VA_ARGS__ )
+#define LOG_TRACE_MSG( ... )   LOG_MSG( uni::common::Log::Level::TRACE, static_cast< const char* >( __PRETTY_FUNCTION__ ), __VA_ARGS__ )
 
 #define REQUIRED_RETVAL( condition, msg, return_value ) \
     if( !( condition ) )                                \
