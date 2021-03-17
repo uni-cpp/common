@@ -11,34 +11,56 @@
 #include <mutex>
 #include <thread>
 
+#define LOG_ENUM( EnumClass, ... )                                                                             \
+    inline std::string stringify( EnumClass enum_class, const char* name, EnumClass value )                    \
+    {                                                                                                          \
+        return ( enum_class != value ) ? "UNKNOWN" : "\"" + std::string( name ) + "\"";                        \
+    }                                                                                                          \
+                                                                                                               \
+    template < typename... Args >                                                                              \
+    inline std::string stringify( EnumClass enum_class, const char* name, EnumClass value, Args... args )      \
+    {                                                                                                          \
+        return ( enum_class != value ) ? stringify( enum_class, args... ) : "\"" + std::string( name ) + "\""; \
+    }                                                                                                          \
+                                                                                                               \
+    inline std::ostream& operator<<( std::ostream& out, EnumClass enum_class )                                 \
+    {                                                                                                          \
+        out << stringify( enum_class, __VA_ARGS__ );                                                           \
+        return out;                                                                                            \
+    }
+
+#define LOG_E( x ) #x, x
+
 namespace uni
 {
 namespace common
 {
+enum class LogLevel : uint16_t
+{
+    FATAL = 0U,
+    ERROR,
+    WARNING,
+    INFO,
+    DEBUG,
+    TRACE,
+
+    COUNT  //< Maximum value, used for range check
+};
+
+LOG_ENUM( LogLevel, LOG_E( LogLevel::FATAL ), LOG_E( LogLevel::ERROR ), LOG_E( LogLevel::WARNING ), LOG_E( LogLevel::INFO ), LOG_E( LogLevel::DEBUG ), LOG_E( LogLevel::TRACE ) );
+
 class Log
 {
 public:
-    enum class Level : uint16_t
-    {
-        FATAL = 0U,
-        ERROR,
-        WARNING,
-        INFO,
-        DEBUG,
-        TRACE,
-
-        COUNT  //< Maximum value, used for range check
-    };
-
     void
-    set_max_log_level( Level level )
+    set_max_log_level( LogLevel level )
     {
         m_max_level = level;
     }
 
     template < typename... Args >
     void
-    log_msg( Level level, const char* func, const Args&... args )
+    log_msg( LogLevel level, const char* func, const Args&... args )
     {
         if( level <= m_max_level )
         {
@@ -46,9 +68,7 @@ public:
             m_ostream << "\""
                       << "Thread:" << std::this_thread::get_id( ) << "\""
                       << " ";
-            m_ostream << "\""
-                      << "Level:" << static_cast< std::underlying_type< Level >::type >( level ) << "\""
-                      << " ";
+            m_ostream << level << " ";
             m_ostream << "\"" << func << "\""
                       << " ";
             append( m_ostream, args... );
@@ -74,7 +94,7 @@ private:
 
     std::mutex m_mutex{};
     std::ostream& m_ostream{ std::cout };
-    Level m_max_level{ Level::DEBUG };
+    LogLevel m_max_level{ LogLevel::DEBUG };
 };
 
 Log& logger( );
@@ -84,12 +104,12 @@ Log& logger( );
 
 #define LOG_MSG( ... ) uni::common::logger( ).log_msg( __VA_ARGS__ )
 
-#define LOG_FATAL_MSG( ... )   LOG_MSG( uni::common::Log::Level::FATAL, static_cast< const char* >( __PRETTY_FUNCTION__ ), __VA_ARGS__ )
-#define LOG_ERROR_MSG( ... )   LOG_MSG( uni::common::Log::Level::ERROR, static_cast< const char* >( __PRETTY_FUNCTION__ ), __VA_ARGS__ )
-#define LOG_WARNING_MSG( ... ) LOG_MSG( uni::common::Log::Level::WARNING, static_cast< const char* >( __PRETTY_FUNCTION__ ), __VA_ARGS__ )
-#define LOG_INFO_MSG( ... )    LOG_MSG( uni::common::Log::Level::INFO, static_cast< const char* >( __PRETTY_FUNCTION__ ), __VA_ARGS__ )
-#define LOG_DEBUG_MSG( ... )   LOG_MSG( uni::common::Log::Level::DEBUG, static_cast< const char* >( __PRETTY_FUNCTION__ ), __VA_ARGS__ )
-#define LOG_TRACE_MSG( ... )   LOG_MSG( uni::common::Log::Level::TRACE, static_cast< const char* >( __PRETTY_FUNCTION__ ), __VA_ARGS__ )
+#define LOG_FATAL_MSG( ... )   LOG_MSG( uni::common::LogLevel::FATAL, static_cast< const char* >( __PRETTY_FUNCTION__ ), __VA_ARGS__ )
+#define LOG_ERROR_MSG( ... )   LOG_MSG( uni::common::LogLevel::ERROR, static_cast< const char* >( __PRETTY_FUNCTION__ ), __VA_ARGS__ )
+#define LOG_WARNING_MSG( ... ) LOG_MSG( uni::common::LogLevel::WARNING, static_cast< const char* >( __PRETTY_FUNCTION__ ), __VA_ARGS__ )
+#define LOG_INFO_MSG( ... )    LOG_MSG( uni::common::LogLevel::INFO, static_cast< const char* >( __PRETTY_FUNCTION__ ), __VA_ARGS__ )
+#define LOG_DEBUG_MSG( ... )   LOG_MSG( uni::common::LogLevel::DEBUG, static_cast< const char* >( __PRETTY_FUNCTION__ ), __VA_ARGS__ )
+#define LOG_TRACE_MSG( ... )   LOG_MSG( uni::common::LogLevel::TRACE, static_cast< const char* >( __PRETTY_FUNCTION__ ), __VA_ARGS__ )
 
 #define REQUIRED_RETVAL( condition, msg, return_value ) \
     if( !( condition ) )                                \
