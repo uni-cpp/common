@@ -88,8 +88,7 @@ private:
     inline void
     append( std::ostream& ostream, const T& value )
     {
-        // Probably std::endl would be more useful in case of unexpected crash
-        ostream << value << "\n";
+        ostream << value << std::endl;
     }
 
     std::mutex m_mutex{};
@@ -123,3 +122,45 @@ Log& logger( );
 // https://stackoverflow.com/questions/11761703/overloading-macro-on-number-of-arguments/11763277#11763277
 #define GET_MACRO( _1, _2, _3, MACRO, ... ) MACRO
 #define REQUIRED( ... )                     GET_MACRO( __VA_ARGS__, REQUIRED_RETVAL, REQUIRED_VOID )( __VA_ARGS__ )
+
+#define LOG_IT( x ) #x, x
+
+template < typename T >
+inline void
+merge_key_value_pairs( std::ostream& out, const char* key, const T& value )
+{
+    out << R"(")" << key << R"(":)";
+    out << value;
+    out << "";
+}
+
+template < typename T, typename... Args >
+inline void
+merge_key_value_pairs( std::ostream& out, const char* key, const T& value, const Args&... args )
+{
+    out << R"(")" << key << R"(":)";
+    out << value;
+    out << ",";
+    merge_key_value_pairs( out, args... );
+}
+
+template < typename... Args >
+inline void
+serialization( std::ostream& out, const Args&... args )
+{
+    out << "{";
+    merge_key_value_pairs( out, args... );
+    out << "}";
+}
+
+#define LOG_CLASS( Class, ... )                                                      \
+    inline void serialize_me( std::ostream& out ) const                              \
+    {                                                                                \
+        serialization( out, __VA_ARGS__ );                                           \
+    }                                                                                \
+                                                                                     \
+    friend inline std::ostream& operator<<( std::ostream& stream, const Class& obj ) \
+    {                                                                                \
+        obj.serialize_me( stream );                                                  \
+        return stream;                                                               \
+    }
