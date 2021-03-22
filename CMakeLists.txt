@@ -2,6 +2,7 @@ project( uni-common )
 
 set( HEADERS
     "include/uni/common/BaseNotifier.hpp"
+    "include/uni/common/Broadcast.hpp"
     "include/uni/common/Constants.hpp"
     "include/uni/common/Defines.hpp"
     "include/uni/common/ErrorCode.hpp"
