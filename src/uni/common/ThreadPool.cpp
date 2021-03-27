@@ -35,6 +35,13 @@ ThreadPool::~ThreadPool( )
 }
 
 void
+ThreadPool::submit( std::function< void( ) >& f )
+{
+    std::lock_guard< std::mutex > lock{ m_mutex };
+    m_queue.push( f );
+}
+
+void
 ThreadPool::worker( )
 {
     while( !m_is_done )

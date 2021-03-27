@@ -27,13 +27,7 @@ public:
     ThreadPool( );
     ~ThreadPool( );
 
-    template < class FunctionType >
-    void
-    submit( FunctionType f )
-    {
-        std::lock_guard< std::mutex > lock{ m_mutex };
-        m_queue.push( std::function< void( ) >( f ) );
-    }
+    void submit( std::function< void( ) >& f );
 
 private:
     void worker( );
