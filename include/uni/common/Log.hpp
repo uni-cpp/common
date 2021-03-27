@@ -17,7 +17,7 @@
         return ( enum_class != value ) ? "UNKNOWN" : "\"" + std::string( name ) + "\"";                        \
     }                                                                                                          \
                                                                                                                \
-    template < typename... Args >                                                                              \
+    template < class... Args >                                                                                 \
     inline std::string stringify( EnumClass enum_class, const char* name, EnumClass value, Args... args )      \
     {                                                                                                          \
         return ( enum_class != value ) ? stringify( enum_class, args... ) : "\"" + std::string( name ) + "\""; \
@@ -58,7 +58,7 @@ public:
         m_max_level = level;
     }
 
-    template < typename... Args >
+    template < class... Args >
     void
     log_msg( LogLevel level, const char* func, const Args&... args )
     {
@@ -76,7 +76,7 @@ public:
     }
 
 private:
-    template < typename T, typename... Args >
+    template < class T, class... Args >
     inline void
     append( std::ostream& ostream, const T& value, const Args&... args )
     {
@@ -84,7 +84,7 @@ private:
         append( ostream, args... );
     }
 
-    template < typename T >
+    template < class T >
     inline void
     append( std::ostream& ostream, const T& value )
     {
@@ -125,7 +125,7 @@ Log& logger( );
 
 #define LOG_IT( x ) #x, x
 
-template < typename T >
+template < class T >
 inline void
 merge_key_value_pairs( std::ostream& out, const char* key, const T& value )
 {
@@ -134,7 +134,7 @@ merge_key_value_pairs( std::ostream& out, const char* key, const T& value )
     out << "";
 }
 
-template < typename T, typename... Args >
+template < class T, class... Args >
 inline void
 merge_key_value_pairs( std::ostream& out, const char* key, const T& value, const Args&... args )
 {
@@ -144,7 +144,7 @@ merge_key_value_pairs( std::ostream& out, const char* key, const T& value, const
     merge_key_value_pairs( out, args... );
 }
 
-template < typename... Args >
+template < class... Args >
 inline void
 serialization( std::ostream& out, const Args&... args )
 {

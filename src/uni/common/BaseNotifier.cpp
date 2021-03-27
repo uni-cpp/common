@@ -11,29 +11,29 @@ namespace uni
 {
 namespace common
 {
-template < typename LISTENER >
-BaseNotifier< LISTENER >::~BaseNotifier( )
+template < class ListenerT >
+BaseNotifier< ListenerT >::~BaseNotifier( )
 {
-    std::lock_guard< std::mutex > lock{ m__mutex };
+    std::lock_guard< std::mutex > lock{ m_mutex };
     m_listeners.clear( );
 };
 
-template < typename LISTENER >
+template < class ListenerT >
 void
-BaseNotifier< LISTENER >::add_listener( LISTENER* listener )
+BaseNotifier< ListenerT >::add_listener( ListenerT* listener )
 {
     if( listener )
     {
-        std::lock_guard< std::mutex > lock{ m__mutex };
+        std::lock_guard< std::mutex > lock{ m_mutex };
         m_listeners.emplace( listener );
     }
 };
 
-template < typename LISTENER >
+template < class ListenerT >
 void
-BaseNotifier< LISTENER >::remove_listener( LISTENER* listener )
+BaseNotifier< ListenerT >::remove_listener( ListenerT* listener )
 {
-    std::lock_guard< std::mutex > lock{ m__mutex };
+    std::lock_guard< std::mutex > lock{ m_mutex };
     m_listeners.erase( listener );
 };
 

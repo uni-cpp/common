@@ -14,21 +14,21 @@ namespace uni
 {
 namespace common
 {
-template < typename LISTENER >
+template < class ListenerT >
 class BaseNotifier
 {
 public:
     virtual ~BaseNotifier( );
 
 public:
-    void add_listener( LISTENER* listener );
-    void remove_listener( LISTENER* listener );
+    void add_listener( ListenerT* listener );
+    void remove_listener( ListenerT* listener );
 
-    template < typename CALLBACK, typename... ARGS >
+    template < class CallbackT, class... ARGS >
     void
-    notify_listeners( CALLBACK callback, ARGS&&... args ) const
+    notify_listeners( CallbackT callback, ARGS&&... args ) const
     {
-        std::lock_guard< std::mutex > lock{ m__mutex };
+        std::lock_guard< std::mutex > lock{ m_mutex };
         for( const auto& listener : m_listeners )
         {
             ( listener->*callback )( std::forward( args... ) );
@@ -36,8 +36,8 @@ public:
     }
 
 private:
-    mutable std::mutex m__mutex;
-    std::set< LISTENER* > m_listeners;
+    mutable std::mutex m_mutex;
+    std::set< ListenerT* > m_listeners;
 };
 
 }  // namespace common

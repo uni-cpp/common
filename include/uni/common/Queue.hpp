@@ -18,7 +18,7 @@ namespace uni
 {
 namespace common
 {
-template < typename T >
+template < class T >
 class UNI_API Queue
 {
 public:

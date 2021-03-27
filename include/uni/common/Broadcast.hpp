@@ -18,7 +18,7 @@ namespace common
 {
 namespace
 {
-template < typename D >
+template < class D >
 size_t
 get_class_id( )
 {
@@ -79,7 +79,7 @@ protected:
 // ================================================= ~2 =================================================
 
 // ================================================= 3 =================================================
-template < typename D >
+template < class D >
 class Event : public IEvent
 {
 public:
@@ -118,7 +118,7 @@ public:
     D m_data;
 };
 
-template < typename D >
+template < class D >
 class EventListener : public IEventListener
 {
 public:
@@ -192,7 +192,7 @@ public:
 // ================================================= ~3 =================================================
 
 // ================================================= 4 =================================================
-template < typename _BroadcastDataType >
+template < class _BroadcastDataType >
 class Broadcast
 {
 public:

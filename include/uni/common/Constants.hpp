@@ -18,7 +18,7 @@ constexpr uint32_t HOURS_IN_DAY{ 24U };
 constexpr uint32_t MINITES_IN_HOUR{ 60U };
 constexpr uint32_t SECONDS_IN_MINUTE{ 60U };
 
-constexpr uint64_t DEFAULT_TIMEOUT{ 50U };
+constexpr uint64_t DEFAULT_TIMEOUT_MS{ 50U };
 
-} // namespace common
-} // namespace uni
+}  // namespace common
+}  // namespace uni

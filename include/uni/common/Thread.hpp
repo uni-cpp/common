@@ -32,7 +32,7 @@ public:
     };
 
 public:
-    Thread( std::string name, Repeat repeat_type = Repeat::ONCE, uint64_t timeout_ms = DEFAULT_TIMEOUT );
+    Thread( std::string name, Repeat repeat_type = Repeat::ONCE, uint64_t timeout_ms = DEFAULT_TIMEOUT_MS );
 
     ~Thread( ) override;
 

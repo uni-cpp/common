@@ -12,6 +12,7 @@
 
 #include <atomic>
 #include <functional>
+#include <mutex>
 #include <queue>
 #include <thread>
 #include <vector>
@@ -26,19 +27,22 @@ public:
     ThreadPool( );
     ~ThreadPool( );
 
-    template < typename FunctionType >
+    template < class FunctionType >
     void
     submit( FunctionType f )
     {
+        std::lock_guard< std::mutex > lock{ m_mutex };
         m_queue.push( std::function< void( ) >( f ) );
     }
 
 private:
-    void worker_thread( );
+    void worker( );
 
 private:
-    std::atomic< bool > m_done{ false };
+    std::mutex m_mutex{};
+    std::atomic< bool > m_is_done{ false };
     std::queue< std::function< void( ) > > m_queue{};
+
     std::vector< std::thread > m_threads{};
 };
 
