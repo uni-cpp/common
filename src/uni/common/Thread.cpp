@@ -28,10 +28,8 @@ Thread::~Thread( )
     stop( );
 }
 
-Thread::Thread( std::string name, Repeat repeat_type, uint64_t timeout_ms )
-    : m_name{ std::move( name ) }
-    , m_repeat_type{ repeat_type }
-    , m_timeout_ms{ timeout_ms }
+Thread::Thread( const Settings& settings )
+    : m_settings{ settings }
 {
     LOG_TRACE_MSG( "" );
 }
@@ -128,7 +126,7 @@ Thread::join( )
 std::string
 Thread::get_name( ) const
 {
-    return m_name;
+    return m_settings.name;
 }
 
 void
@@ -158,9 +156,9 @@ Thread::prepare_and_run( )
 {
     LOG_TRACE_MSG( "" );
 
-    set_current_thread_name( m_name );
+    set_current_thread_name( m_settings.name );
 
-    switch( m_repeat_type )
+    switch( m_settings.repeat_type )
     {
         case( Repeat::ONCE ):
         {
@@ -188,9 +186,9 @@ Thread::prepare_and_run( )
 
                 const auto time_elapsed = end_time - start_time;
 
-                if( time_elapsed < std::chrono::milliseconds( m_timeout_ms ) )
+                if( time_elapsed < std::chrono::milliseconds( m_settings.timeout_ms ) )
                 {
-                    const auto time_to_next_run = std::chrono::milliseconds( m_timeout_ms ) - time_elapsed;
+                    const auto time_to_next_run = std::chrono::milliseconds( m_settings.timeout_ms ) - time_elapsed;
                     std::unique_lock< std::mutex > lock( m_mutex );
                     if( m_cv.wait_for( lock, time_to_next_run, [this] { return m_is_closing; } ) )
                     {

@@ -21,7 +21,7 @@ namespace uni
 namespace common
 {
 ThreadTest::ThreadTest( )
-    : ::uni::common::Thread( NAME_TEST_THREAD )
+    : ::uni::common::Thread( { NAME_TEST_THREAD } )
 {
 }
 

@@ -21,14 +21,18 @@ namespace common
 template < class T >
 class UNI_API Queue
 {
+    using DataType = T;
+
 public:
     Queue( ) = default;
 
     void
     push( T data )
     {
-        std::lock_guard< std::mutex > lock( m_mutex );
-        m_queue.push( std::move( data ) );
+        {
+            std::lock_guard< std::mutex > lock( m_mutex );
+            m_queue.push( std::move( data ) );
+        }
         m_cv.notify_one( );
     }
 

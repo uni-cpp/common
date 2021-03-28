@@ -2,64 +2,89 @@
 /// @file uni/common/ThreadPool.cpp
 /// @brief Implementation thread pool class.
 /// @author Sergey Polyakov <white.irbys@gmail.com>
-/// @date 09.2020
+/// @date 2020-2021
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 #include "uni/common/ThreadPool.hpp"
+#include "uni/common/Log.hpp"
 
 namespace uni
 {
 namespace common
 {
-ThreadPool::ThreadPool( )
-    : m_is_done( false )
+namespace
 {
-    const size_t thread_count = std::thread::hardware_concurrency( );
-    for( unsigned i = 0; i < thread_count; ++i )
+class TaskRunner : public uni::common::Thread
+{
+public:
+    TaskRunner( const Thread::Settings& settings, Queue< DefaultVoidStdFunction >& queue )
+        : Thread( settings )
+        , m_queue{ queue }
     {
-        m_threads.emplace_back( &ThreadPool::worker, this );
+    }
+
+    void
+    run( ) override
+    {
+        DefaultVoidStdFunction task;
+        if( m_queue.try_pop( task ) )
+        {
+            task( );
+        }
+        else
+        {
+            // Could be sleeped for ~50MS
+            std::this_thread::yield( );
+        }
+    }
+
+private:
+    Queue< DefaultVoidStdFunction >& m_queue;
+};
+}  // namespace
+
+
+ThreadPool::ThreadPool( const Settings& settings )
+{
+    LOG_DEBUG_MSG( LOG_IT( settings ) );
+
+    for( uint32_t i = 0; i < settings.thread_count; ++i )
+    {
+        const std::string thread_name = settings.thread_settings.name + "_" + std::to_string( i );
+        Thread::Settings settings{ { thread_name } };
+
+        m_threads.emplace_back( std::make_unique< TaskRunner >( settings, m_queue ) );
     }
 }
 
 ThreadPool::~ThreadPool( )
 {
-    m_is_done = true;
+    LOG_TRACE_MSG( "" );
+    m_is_on_shutdown = true;
 
     for( auto& thread : m_threads )
     {
-        if( thread.joinable( ) )
+        if( thread )
         {
-            thread.join( );
-        }
-    }
-}
-
-void
-ThreadPool::submit( std::function< void( ) >& f )
-{
-    std::lock_guard< std::mutex > lock{ m_mutex };
-    m_queue.push( f );
-}
-
-void
-ThreadPool::worker( )
-{
-    while( !m_is_done )
-    {
-        std::unique_lock< std::mutex > lock{ m_mutex };
-        if( !m_queue.empty( ) )
-        {
-            std::function< void( ) > task = m_queue.front( );
-            m_queue.pop( );
-            task( );
+            thread->stop( );
         }
         else
         {
-            lock.unlock( );
-            std::this_thread::yield( );
-            // Could be sleeped for ~50MS
+            LOG_ERROR_MSG( "Empty thread" );
         }
     }
+}
+
+ErrorCode
+ThreadPool::submit( const DefaultVoidStdFunction& task )
+{
+    REQUIRED( !m_is_on_shutdown, "Thread pool is on shutdown", ErrorCode::INTERNAL );
+
+    LOG_TRACE_MSG( "" );
+
+    m_queue.push( task );
+
+    return ErrorCode::NONE;
 }
 
 }  // namespace common
