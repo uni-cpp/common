@@ -7,6 +7,7 @@
 
 #include "uni/common/ThreadPool.hpp"
 #include "uni/common/Log.hpp"
+#include "uni/common/Queue.hpp"
 
 namespace uni
 {
@@ -27,7 +28,7 @@ public:
     run( ) override
     {
         DefaultVoidStdFunction task;
-        if( m_queue.try_pop( task ) )
+        if( OperationStatus::SUCCESS == m_queue.try_pop( task ) )
         {
             task( );
         }
