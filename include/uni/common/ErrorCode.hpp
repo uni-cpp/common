@@ -2,7 +2,7 @@
 /// @file uni/common/ErrorCode.hpp
 /// @brief Declaration ErrorCode class.
 /// @author Sergey Polyakov <white.irbys@gmail.com>
-/// @date 2021
+/// @date 2021-2022
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 #pragma once
@@ -14,8 +14,10 @@ namespace common
 enum class ErrorCode
 {
     NONE,
-    INTERNAL,
+    INVALID_PARAM,
+    NOT_FOUND,
     TIMEOUT,
+    INTERNAL,
 
     UNDEFINED
 };
